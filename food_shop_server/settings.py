@@ -27,7 +27,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
 CSRF_TRUSTED_ORIGINS = ['https://food-backend-gjx4.onrender.com','https://*.127.0.0.1']
-
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 
 # Application definition
 
