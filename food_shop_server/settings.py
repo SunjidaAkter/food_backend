@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-8o^-gkgtwmq$9)_^s&ems*^@#4li6qai4vjf1-l6gok1d4466@
 DEBUG = True
 
 ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['https://food-backend-gjx4.onrender.com/','https://*.127.0.0.1']
+CSRF_TRUSTED_ORIGINS = ['https://food-backend-gjx4.onrender.com','https://*.127.0.0.1']
 
 
 # Application definition
