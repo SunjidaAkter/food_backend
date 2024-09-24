@@ -33,7 +33,7 @@ class UserRegistrationApiView(APIView):
             print("token ", token)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             print("uid ", uid)
-            confirm_link = f"http://127.0.0.1:8000/user_accounts/active/{uid}/{token}"
+            confirm_link = f"https://food-backend-ohlq.onrender.com/user_accounts/active/{uid}/{token}"
             email_subject = "Confirm Your Email"
             email_body = render_to_string('confirm_email.html', {'confirm_link' : confirm_link})
             
@@ -56,9 +56,9 @@ def activate(request, uid64, token):
         user.is_staff=True
         user.is_superuser = True
         user.save()
-        return redirect('http://localhost:3000/login')
+        return redirect('https://yummi-tummy.netlify.app/login')
     else:
-        return redirect('http://localhost:3000/register')
+        return redirect('https://yummi-tummy.netlify.app/register')
     
 
 class UserLoginApiView(APIView):
