@@ -21,7 +21,7 @@ class Cuisine(models.Model):
 class Menu(models.Model):
     title = models.CharField(max_length=50)
     description = models.CharField(max_length=500)
-    image = models.ImageField(upload_to="menu/images/")
+    image = models.URLField(max_length=500,null=True,blank=True)
     category = models.ForeignKey(Category, on_delete=models.CASCADE, null=True, blank=True)
     cuisine = models.ManyToManyField(Cuisine)
     price = models.IntegerField()

@@ -16,7 +16,7 @@ class MenuSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=models.Category.objects.all())
     cuisine = serializers.PrimaryKeyRelatedField(many=True, queryset=models.Cuisine.objects.all())
     review_count = serializers.SerializerMethodField()
-    image = serializers.ImageField(required=False)
+    image = serializers.URLField(required=False)
     class Meta:
         model = models.Menu
         fields = '__all__'

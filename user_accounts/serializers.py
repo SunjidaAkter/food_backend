@@ -11,7 +11,7 @@ class UserAccountsSerializer(serializers.ModelSerializer):
 class RegistrationSerializer(serializers.ModelSerializer):
     confirm_password = serializers.CharField(required=True)
     mobile_no = serializers.CharField(required=False, allow_blank=True)
-    image = serializers.ImageField(required=False, allow_null=True)
+    image = serializers.URLField(required=False, allow_blank=True)
     address = serializers.CharField(required=False, allow_blank=True)
 
     class Meta:
@@ -43,7 +43,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         UserAccounts.objects.create(
             user=user,
             mobile_no=validated_data.get('mobile_no', ''),
-            image=validated_data.get('image', None),
+            image=validated_data.get('image', ''),
             address=validated_data.get('address', '')
         )
         
