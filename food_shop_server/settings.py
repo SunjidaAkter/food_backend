@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-8o^-gkgtwmq$9)_^s&ems*^@#4li6qai4vjf1-l6gok1d4466@
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["*"]
-CSRF_TRUSTED_ORIGINS = ['https://food-backend-ohlq.onrender.com','https://*.127.0.0.1']
-
+ALLOWED_HOSTS = ["127.0.0.1",".vercel.app"]
+CSRF_TRUSTED_ORIGINS = ['https://*.127.0.0.1']
+CORS_ALLOW_ALL_ORIGINS = True
 # Application definition
 
 INSTALLED_APPS = [
@@ -83,7 +83,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'food_shop_server.wsgi.application'
+WSGI_APPLICATION = 'food_shop_server.wsgi.app'
 
 
 # Database
@@ -146,6 +146,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 MEDIA_URL = '/media/'
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
