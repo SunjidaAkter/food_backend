@@ -17,6 +17,7 @@ class Order(models.Model):
     customer = models.ForeignKey(UserAccounts, on_delete = models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete = models.CASCADE)
     order_status = models.CharField(choices = ORDER_STATUS, max_length = 10, default = "Pending")
+    delivery_address = models.CharField(max_length =800,null=True, blank=True )
     quantity = models.IntegerField()
     created_on = models.DateField(auto_now_add=True)
     cost=models.IntegerField(default=0)
