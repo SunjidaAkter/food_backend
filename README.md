@@ -182,7 +182,8 @@ python manage.py runserver
 <br>
 
 
-###Conclusion###
+# Conclusion
+
 In developing the Yummy Tummy Food Shop backend, the aim was to build a seamless, secure platform for managing food orders and customer interactions efficiently. Using Django and PostgreSQL ensures a reliable and scalable system, allowing smooth operations between customers and the food shop.
 
 With features like role-based access, order tracking, and menu management, I believe this platform will enhance the customer experience and streamline shop management. I look forward to seeing the value it can add, and if you have any questions or would like to contribute, please reach out!
