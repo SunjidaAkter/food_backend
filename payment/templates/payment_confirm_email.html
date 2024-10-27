@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Payment Confirmation</title>
+</head>
+
+<body>
+    <h2>Payment Confirmation</h2>
+    <p>Dear {{ user.user.first_name }},</p>
+    <p>Thank you for your payment.</p>
+
+    <p>Order Details:</p>
+    <ul>
+        <li><strong>Order ID:</strong> {{ order.id }}</li>
+        <li><strong>Transaction ID:</strong> {{ payment.transaction_id }}</li>
+        <li><strong>Amount Paid:</strong> {{ total_cost }} BDT</li>
+    </ul>
+
+    <p>You can download your payment receipt from the following link:</p>
+    <p><a href="{{ pdf_link }}">Download Receipt</a></p>
+
+    <p>If you have any questions, please contact us at support@example.com.</p>
+
+    <p>Best regards,<br>YUMMY TUMMY Team</p>
+</body>
+
+</html>
