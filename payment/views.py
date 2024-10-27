@@ -1,11 +1,9 @@
 
 import uuid
-import logging
 from datetime import datetime
 from django.db import transaction
 from django.shortcuts import render, reverse
 from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
 from django.utils.translation import gettext_lazy as _
@@ -16,30 +14,35 @@ from rest_framework.response import Response
 from sslcommerz_lib import SSLCOMMERZ
 from user_accounts.models import UserAccounts
 from orders.models import Order
+from menu.models import Menu
+from . import models
 
 
-logger = logging.getLogger(__name__)
+
 global_data = {}
-my_array = []
-
+arr = []
+arr1=[]
 def generate_transaction_id():
     timestamp = datetime.now().strftime('%Y%m%d%H%M%S')
     unique_id = uuid.uuid4().hex[:6].upper()
-    return f'YUMMY-{timestamp}-{unique_id}'
+    return f'TXN-{timestamp}-{unique_id}'
+
 
 class PaymentSerializer(serializers.Serializer):
     order_id = serializers.IntegerField()
+    menu_id = serializers.IntegerField()
+    user_id = serializers.IntegerField()
     mobile = serializers.CharField(max_length=500)
     address = serializers.CharField(max_length=500)
     email = serializers.EmailField(max_length=500)
-    user_id = serializers.IntegerField()
 
     def validate(self, data):
         order_id = data.get('order_id')
+        menu_id = data.get('menu_id')
+        user_id = data.get('user_id')
         mobile = data.get('mobile')
         address = data.get('address')
         email = data.get('email')
-        user_id = data.get('user_id')
 
         try:
             order = Order.objects.get(id=order_id)
@@ -47,79 +50,106 @@ class PaymentSerializer(serializers.Serializer):
             raise serializers.ValidationError({'error': _('Order does not exist')})
 
         try:
-            user_account = UserAccounts.objects.get(user_id=user_id)
-           
+            user_accounts = UserAccounts.objects.get(user_id=user_id)  
         except UserAccounts.DoesNotExist:
             raise serializers.ValidationError({'error': _('User account does not exist')})
+        
+        try:
+            menu = Menu.objects.get(menu_id=menu_id)
+        except Menu.DoesNotExist:
+            raise serializers.ValidationError({'error': _('Menu item does not exist')})
 
         
         data['order'] = order
         data['user_accounts'] = user_accounts
-        # data['total_cost'] = total_cost
+        data['menu'] = menu
+        data['mobile'] = mobile
+        data['address'] = address
+        data['email'] = email
         return data
 
     def create(self, validated_data):
         try:
             user_id = validated_data.pop('user_id')
-            user_account = validated_data['user_account']
-            total_cost = validated_data['total_cost']
-            number_of_rooms = validated_data['number_of_rooms']
-            start_date = validated_data['start_date']
-            end_date = validated_data['end_date']
+            order_id = validated_data.pop('order_id')
+            menu_id = validated_data.pop('menu_id')
+            mobile = validated_data['mobile']
+            address = validated_data['address']
+            email = validated_data['email']
 
             with transaction.atomic():
                 transaction_id = generate_transaction_id()
                 settings = {
-                    'store_id': 'bookh668dde6d76e0c',
-                    'store_pass': 'bookh668dde6d76e0c@ssl',
+                    'store_id': 'sunji671d9d2a3a509',
+                    'store_pass': 'sunji671d9d2a3a509@ssl',
                     'issandbox': True
                 }
 
                 sslcz = SSLCOMMERZ(settings)
-                hotel = validated_data['hotel']
+                order = validated_data['order']
+                menu = validated_data['menu']
+                user_accounts = validated_data['user_accounts']
                 post_body = {
-                    'total_amount': total_cost,
+                    'total_amount': order.cost,
                     'currency': "BDT",
                     'tran_id': transaction_id,
                     'success_url': 'https://hotel-booking-website-backend.vercel.app/payment/success/', # slashe
                     'fail_url': 'https://hotel-booking-website-backend.vercel.app/payment/fail/',
                     'cancel_url': 'https://hotel-booking-website-backend.vercel.app/payment/cancel/',
                     'emi_option': 0,
-                    'cus_name': user_account.user.first_name,
-                    'cus_email': user_account.user.email,
-                    'cus_phone': "01401734642",
-                    'cus_add1': "Mymensingh",
+                    'cus_name': user_accounts.user.first_name,
+                    'cus_email': email,
+                    'cus_phone': mobile,
+                    'cus_add1': address,
                     'cus_city': "Dhaka",
                     'cus_country': "Bangladesh",
-                    'shipping_method': "NO",
-                    'num_of_item': number_of_rooms,
-                    'product_name': hotel.name,
-                    'product_category': "Room",
-                    'product_profile': "general"
+                    'shipping_method': "YES",
+                    'num_of_item': order.quantity,
+                    'product_name': menu.title,
+                    'product_category': menu.category,
                 }
 
                 response = sslcz.createSession(post_body)
 
                 if response.get('status') == 'SUCCESS':
                     gateway_url = response['GatewayPageURL']
-                    booking = Booking.objects.create(
-                        user_id=user_id,
-                        hotel=hotel,
-                        start_date=start_date,
-                        end_date=end_date,
-                        number_of_rooms=number_of_rooms,
+
+                    # Update the Order fields
+                    order.transaction_id = transaction_id
+                    order.payment_url = gateway_url
+                    order.save()
+
+                    # Create initial payment record with 'PENDING' status
+                    payment = models.Payment.objects.create(
+                        order=order,
+                        menu=menu,
+                        customer=user_accounts,
+                        payment_url=gateway_url,
+                        transaction_id=transaction_id,
+                        status='PENDING'
                     )
 
-                    booking_id = booking.id
-                    print("Booking id =========================================",booking_id)
-                    my_array.append(booking_id)
-                    global_data[transaction_id] = user_account
+                    # Store global data
+                    payment_id = payment.id
+                    global_data[transaction_id] = user_accounts
+                    arr.append(order_id)
+                    arr1.append(payment_id)
                     return {
-                        'booking_id': booking.id,
+                        'order_id': order.id,
                         'payment_url': gateway_url,
                         'transaction_id': transaction_id
                     }
                 else:
+
+                    # If payment failed, save a failed payment record
+                    models.Payment.objects.create(
+                        order=order,
+                        menu=menu,
+                        customer=user_accounts,
+                        transaction_id=transaction_id,
+                        payment_url=gateway_url,
+                        status='FAILED'
+                    )
                     raise serializers.ValidationError({'error': _('Failed to create payment session')})
 
         except Exception as e:
@@ -137,57 +167,62 @@ class PaymentViewSet(viewsets.ViewSet):
 def payment_success(request):
     if request.method == 'POST':
         transaction_id = request.POST.get('tran_id')
-        print("transaction id ==============================", transaction_id)
-        if my_array:
-            temp_booking_id = my_array.pop(0)
-            print("temp booking id =================================",temp_booking_id)
+        if arr and arr1:
+            arr_id = arr.pop(0)
+            pay_id = arr1.pop(0)
         else:
-            temp_booking_id = None
+            arr_id = None
+            pay_id=None
         
-        if temp_booking_id is None:
-            return render(request, 'booking_fail.html')
+        if arr_id is None and pay_id is None:
+            return render(request, 'payment_fail.html')
 
         try:
-            booking = Booking.objects.get(id=temp_booking_id)
-            hotel = booking.hotel
-            user_account = global_data.get(transaction_id)
+            payment=models.Payment.objects.get(id=pay_id)
+            order = Order.objects.get(id=arr_id)
+            menu=order.menu
+            user_accounts = global_data.get(transaction_id)
+            if not user_accounts:
+                raise ValidationError({"error":"User Account not found"})
 
-            hotel.available_room -= booking.number_of_rooms
-            hotel.save(update_fields=['available_room'])
+            payment.status = 'COMPLETED'
+            payment.save(update_fields=['status'])
 
-            email_subject = _("Booking Confirmation")
-            email_body = render_to_string('book_confirm_email.html', {
-                'hotel_name': hotel.name,
-                'start_date': booking.start_date,
-                'end_date': booking.end_date,
-                'total_cost': hotel.price_per_night * booking.number_of_rooms * (booking.end_date - booking.start_date).days,
-                'pdf_link': request.build_absolute_uri(reverse('download_booking_pdf', args=[booking.id]))
+            order.is_paid=True
+            order.save(update_fields=['is_paid'])
+
+            email_subject = _("Payment Confirmation")
+            email_body = render_to_string('payment_confirm_email.html', {
+                'order': order,
+                'payment': payment,
+                'user': user_accounts,
+                'total_cost': order.cost,
+                'pdf_link': request.build_absolute_uri(reverse('download_order_pdf', args=[order.id]))
             })
-            email = EmailMultiAlternatives(email_subject, '', to=[user_account.user.email])
+            email = EmailMultiAlternatives(email_subject, '', to=[user_accounts.user.email])
             email.attach_alternative(email_body, "text/html")
             email.send()
 
             context = {
-                'hotel_name': hotel.name,
-                'hotel_address': hotel.address,
-                'start_date': booking.start_date,
-                'end_date': booking.end_date,
-                'total_cost': hotel.price_per_night * booking.number_of_rooms * (booking.end_date - booking.start_date).days,
-                'pdf_link': request.build_absolute_uri(reverse('download_booking_pdf', args=[booking.id])),
-                'user_name': user_account.user.username,
-                'user_email': user_account.user.email,
+                'menu': menu,
+                'order': order,
+                'user': user_accounts,
+                'pdf_link': request.build_absolute_uri(reverse('download_order_pdf', args=[order.id])),
             }
 
-            return render(request, 'booking_success.html', context)
+            return render(request, 'payment_success.html', context)
 
-        except Booking.DoesNotExist:
-            logger.error(f"Booking with ID {temp_booking_id} does not exist.")
-            return render(request, 'booking_fail.html')
+        except models.Payment.DoesNotExist:
+            return render(request, 'payment_fail.html')
+        except Order.DoesNotExist:
+            return render(request, 'payment_fail.html')
+        except Menu.DoesNotExist:
+            return render(request, 'payment_fail.html')
 
     return HttpResponse("Payment success page. This page should be accessed via POST request from the payment gateway.")
 @csrf_exempt
-def booking_fail(request):
-    return render(request, 'booking_fail.html')
+def payment_fail(request):
+    return render(request, 'payment_fail.html')
 @csrf_exempt
-def booking_cancel(request):
-    return render(request, 'booking_cancel.html')
+def payment_cancel(request):
+    return render(request, 'payment_cancel.html')
