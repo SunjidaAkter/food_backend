@@ -14,9 +14,9 @@ urlpatterns = [
     path('menu/', include('menu.urls')),
     path('orders/', include('orders.urls')),
     path('cart/', include('cart.urls')),
-    # path('wishlist/', include('wishlist.urls')),
+    path('wishlist/', include('wishlist.urls')),
     # path('specials/', include('specials.urls')),
-    path('payment/', include('payment.urls')),
+    # path('payment/', include('payment.urls')),
 ]
 
 
