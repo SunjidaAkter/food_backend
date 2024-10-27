@@ -12,7 +12,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('user_accounts/', include('user_accounts.urls')),
     path('menu/', include('menu.urls')),
-    # path('orders/', include('orders.urls')),
+    path('orders/', include('orders.urls')),
     path('cart/', include('cart.urls')),
     path('wishlist/', include('wishlist.urls')),
     # path('specials/', include('specials.urls')),
