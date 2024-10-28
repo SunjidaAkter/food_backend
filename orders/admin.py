@@ -5,7 +5,7 @@ from django.template.loader import render_to_string
 # Register your models here.
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['customer_name', 'menu_item', 'order_status', 'quantity', 'created_on', 'is_paid']
+    list_display = ['customer_name', 'menu_item', 'order_status', 'quantity', 'created_on', 'payment_status']
     def customer_name(self,obj):
         return obj.customer.user.first_name
     

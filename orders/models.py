@@ -12,7 +12,12 @@ ORDER_STATUS = [
     ('Pending', 'Pending'),
     ('Delivering', 'Delivering'),
 ]
-
+STATUS_CHOICES = [
+    ('Pending', 'Pending'),
+    ('Completed', 'Completed'),
+    ('Failed', 'Failed'),
+    ('Cancelled', 'Cancelled'),
+]
 class Order(models.Model):
     customer = models.ForeignKey(UserAccounts, on_delete = models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete = models.CASCADE)
@@ -24,7 +29,8 @@ class Order(models.Model):
     transaction_id= models.CharField(max_length=100, blank=True, null=True)
     created_on = models.DateField(auto_now_add=True)
     cost=models.IntegerField(default=0)
-    is_paid = models.BooleanField(default = False)
+    payment_status = models.CharField(choices = STATUS_CHOICES, max_length = 10, default = "Pending",null=True,blank=True)
+    # is_paid = models.BooleanField(default = False)
 
     def __str__(self):
         return f"User : {self.customer.user.first_name} , Menu Item : {self.menu.title}"
