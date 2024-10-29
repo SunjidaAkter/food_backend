@@ -4,16 +4,86 @@
 <head>
     <meta charset="UTF-8">
     <title>Payment Failed</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body styling */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container styling */
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Header styling */
+        h1 {
+            color: #e74c3c;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Paragraph styling */
+        p {
+            margin: 1rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        /* Link styling */
+        a {
+            text-decoration: none;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1.5rem;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 5px;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Payment Failed</h1>
-    <p>We're sorry, but there was an issue with your payment.</p>
+    <div class="container">
+        <h1>Payment Failed</h1>
+        <p>We're sorry, but there was an issue with your payment.</p>
 
-    <p>Please try again. If the problem persists, you can contact our support team for assistance.</p>
+        <p>Please try again. If the problem persists, you can contact our support team for assistance.</p>
 
-    <p><a href="/support">Contact Support</a></p>
-    <p><a href="https://yummi-tummy.netlify.app/">Return to Home</a></p>
+        <p><a class="btn" href="/support">Contact Support</a></p>
+        <p><a href="https://yummi-tummy.netlify.app/">Return to Home</a></p>
+    </div>
 </body>
 
 </html>

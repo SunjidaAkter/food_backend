@@ -11,6 +11,7 @@ ORDER_STATUS = [
     ('Paid', 'Paid'),
     ('Pending', 'Pending'),
     ('Delivering', 'Delivering'),
+    ('Unordered', 'Unordered'),
 ]
 STATUS_CHOICES = [
     ('Pending', 'Pending'),
@@ -21,7 +22,7 @@ STATUS_CHOICES = [
 class Order(models.Model):
     customer = models.ForeignKey(UserAccounts, on_delete = models.CASCADE)
     menu = models.ForeignKey(Menu, on_delete = models.CASCADE)
-    order_status = models.CharField(choices = ORDER_STATUS, max_length = 10, default = "Pending")
+    order_status = models.CharField(choices = ORDER_STATUS, max_length = 10, default = "Unordered")
     address = models.CharField(max_length =100,null=True, blank=True )
     mobile = models.CharField(max_length =100,null=True, blank=True )
     quantity = models.IntegerField()
@@ -29,6 +30,7 @@ class Order(models.Model):
     transaction_id= models.CharField(max_length=100, blank=True, null=True)
     created_on = models.DateField(auto_now_add=True)
     cost=models.IntegerField(default=0)
+    total_cost=models.IntegerField(default=0)
     payment_status = models.CharField(choices = STATUS_CHOICES, max_length = 10, default = "Pending",null=True,blank=True)
     # is_paid = models.BooleanField(default = False)
 

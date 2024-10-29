@@ -4,24 +4,111 @@
 <head>
     <meta charset="UTF-8">
     <title>Payment Successful</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Body styling */
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Container styling */
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        /* Header styling */
+        h1 {
+            color: #4CAF50;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Summary styling */
+        p {
+            margin: 1rem 0;
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        ul {
+            list-style-type: none;
+            margin: 1rem 0;
+            padding: 0;
+            font-size: 1rem;
+            color: #333;
+        }
+
+        ul li {
+            margin: 0.5rem 0;
+            text-align: left;
+        }
+
+        ul li strong {
+            color: #333;
+        }
+
+        /* Link styling */
+        a {
+            text-decoration: none;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        /* Button styling */
+        .btn {
+            display: inline-block;
+            padding: 0.75rem 1.5rem;
+            margin-top: 1.5rem;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 
 <body>
-    <h1>Payment Successful</h1>
-    <p>Thank you, {{ user.user.first_name }}! Your payment was successful.</p>
+    <div class="container">
+        <h1>Payment Successful</h1>
+        <p>Thank you, {{ user.user.first_name }}! Your payment was successful.</p>
 
-    <p>Order Summary:</p>
-    <ul>
-        <li><strong>Order ID:</strong> {{ order.id }}</li>
-        <li><strong>Menu Item:</strong> {{ menu.title }}</li>
-        <li><strong>Amount Paid:</strong> {{ order.cost }} BDT</li>
-    </ul>
+        <p>Order Summary:</p>
+        <ul>
+            <li><strong>Order ID:</strong> {{ order.id }}</li>
+            <li><strong>Menu Item:</strong> {{ menu.title }}</li>
+            <li><strong>Amount Paid:</strong> {{ order.cost }} BDT</li>
+        </ul>
 
-    <p>You can download your payment receipt here:</p>
-    <p><a href="{{ pdf_link }}">Download Receipt</a></p>
+        <p>You can download your payment receipt here:</p>
+        <p><a class="btn" href="{{ pdf_link }}">Download Receipt</a></p>
 
-    <p>We hope you enjoy your order! If you have questions, feel free to reach out to our support team.</p>
-    <p><a href="https://yummi-tummy.netlify.app/">Return to Home</a></p>
+        <p>We hope you enjoy your order! If you have any questions, feel free to reach out to our support team.</p>
+        <p><a href="https://yummi-tummy.netlify.app/">Return to Home</a></p>
+    </div>
 </body>
 
 </html>
