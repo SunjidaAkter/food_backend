@@ -118,8 +118,8 @@ class PaymentSerializer(serializers.Serializer):
                     gateway_url = response['GatewayPageURL']
 
                     # Update the Order fields
-                    order.transaction_id = transaction_id
-                    order.payment_status = "Success" 
+                    # order.transaction_id = transaction_id
+                    order.payment_status = "Pending" 
                     order.payment_url = gateway_url
                     order.save()
 
@@ -148,7 +148,6 @@ class PaymentSerializer(serializers.Serializer):
 
                     # If payment failed, save a failed payment record
                     order.payment_status = "Failed" 
-                    order.transaction_id = transaction_id
                     order.payment_url = gateway_url
                     order.save()
                     raise serializers.ValidationError({'error': _('Failed to create payment session')})
@@ -190,6 +189,7 @@ def payment_success(request):
             # payment.status = 'COMPLETED'
             # payment.save(update_fields=['status'])
 
+            order.transaction_id = transaction_id
             order.payment_status="Completed"
             order.save(update_fields=['payment_status'])
 

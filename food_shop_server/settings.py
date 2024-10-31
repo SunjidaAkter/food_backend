@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'menu',
     'cart',
     'wishlist',
-    'payment'
+    'payment',
+    'transaction',
 ]
 
 
