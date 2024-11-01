@@ -1,5 +1,6 @@
 
 import uuid
+from rest_framework.viewsets import ReadOnlyModelViewSet
 from datetime import datetime
 from django.db import transaction
 from django.shortcuts import render, reverse
@@ -129,10 +130,11 @@ class TransactionSerializer(serializers.Serializer):
             print(f"Exception caught: {e}")
             raise serializers.ValidationError({'error': _('Failed transaction.')})
 
-class AllUserTransactionListAPIView(generics.ListAPIView):
+class AllUserTransactionListAPIView(viewsets.ModelViewSet):
     # queryset = Booking.objects.all()
     queryset = UserTransaction.objects.all()
     serializer_class = AllUserTransactionSerializer
+    http_method_names = ['get', 'post', 'patch', 'delete']
     def get_queryset(self):
         customer_id = self.request.query_params.get('customer_id')
 
