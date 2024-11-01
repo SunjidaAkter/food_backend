@@ -197,7 +197,9 @@ def transaction_success(request):
 
         # except models.Payment.DoesNotExist:
         #     return render(request, 'payment_fail.html')
-        except UserTransaction.DoesNotExist:
+        
+        except Exception as e:
+            print(f"Unexpected error: {e}")
             return render(request, 'trans_fail.html')
         
 
