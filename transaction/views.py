@@ -199,7 +199,7 @@ def transaction_success(request):
         #     return render(request, 'payment_fail.html')
         
         except Exception as e:
-            print(f"Unexpected error: {e}")
+            print(f"Unexpected error: {e}=======================================================================================================================================")
             return render(request, 'trans_fail.html')
         
 
