@@ -92,7 +92,8 @@ class TransactionSerializer(serializers.Serializer):
                     'num_of_item': 0,
                     'product_name': "Transaction",
                     'product_category': "Money",
-                    'product_profile': "general"
+                    'product_profile': 'Money',  # Replace 'General' with a more descriptive label
+                    'product_description': 'Payment for Account.',
                 }
 
                 response = sslcz.createSession(post_body)
